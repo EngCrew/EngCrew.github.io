@@ -1,0 +1,44 @@
+---
+layout: null
+---
+{
+  "posts": [
+    {%- for p in site.blog %}
+    {
+      "slug": {{ p.relative_path | split: "/" | last | split: ".md" | first | jsonify }},
+      "title": {{ p.title | jsonify }},
+      "date": {{ p.date | date: "%Y-%m-%d" | jsonify }},
+      "topic": {{ p.topic | default: "General" | jsonify }},
+      "minutes": {{ p.minutes | default: 3 | jsonify }},
+      "summary": {{ p.summary | default: "" | jsonify }},
+      "draft": {{ p.draft | default: false | jsonify }},
+      "body": {{ p.content | markdownify | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ],
+  "guides": [
+    {%- for g in site.guides %}
+    {
+      "slug": {{ g.relative_path | split: "/" | last | split: ".md" | first | jsonify }},
+      "title": {{ g.title | jsonify }},
+      "date": {{ g.date | date: "%Y-%m-%d" | jsonify }},
+      "tag": {{ g.tag | default: "Guide" | jsonify }},
+      "summary": {{ g.summary | default: "" | jsonify }},
+      "draft": {{ g.draft | default: false | jsonify }},
+      "steps": {{ g.steps | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ],
+  "templates": [
+    {%- for t in site.templates %}
+    {
+      "slug": {{ t.relative_path | split: "/" | last | split: ".md" | first | jsonify }},
+      "title": {{ t.title | jsonify }},
+      "date": {{ t.date | date: "%Y-%m-%d" | jsonify }},
+      "summary": {{ t.summary | default: "" | jsonify }},
+      "draft": {{ t.draft | default: false | jsonify }},
+      "text": {{ t.text | default: "" | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ]
+}

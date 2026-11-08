@@ -1,0 +1,123 @@
+# Pages CMS settings: this file decides what the editor at app.pagescms.org shows.
+
+media:
+  input: images
+  output: /images
+  categories: [image]
+
+content:
+  - name: blog
+    label: Blog posts
+    type: collection
+    path: _blog
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields: [title, topic, date, draft]
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Date
+        type: date
+        required: true
+        description: Newest posts show first on the site.
+      - name: topic
+        label: Topic
+        type: select
+        required: true
+        options:
+          values: [Hardware, Study, Co-op, Career, Labs, Life]
+      - name: minutes
+        label: Minutes to read
+        type: number
+        default: 3
+      - name: summary
+        label: Summary
+        type: text
+        required: true
+        description: One or two sentences shown on the post's card.
+      - name: draft
+        label: Hide from the site (draft)
+        type: boolean
+        default: false
+      - name: body
+        label: Post
+        type: rich-text
+        options:
+          format: markdown
+
+  - name: guides
+    label: Guides (checklists)
+    type: collection
+    path: _guides
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields: [title, tag, date, draft]
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Date
+        type: date
+        required: true
+      - name: tag
+        label: Tag
+        type: string
+        required: true
+        description: A short label like Co-op, Study, Labs or 3D printing.
+      - name: summary
+        label: Summary
+        type: text
+        required: true
+      - name: steps
+        label: Checklist steps
+        type: string
+        list: true
+        description: One step per line. Visitors tick these off as they go.
+      - name: draft
+        label: Hide from the site (draft)
+        type: boolean
+        default: false
+
+  - name: templates
+    label: Templates
+    type: collection
+    path: _templates
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields: [title, date, draft]
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Date
+        type: date
+        required: true
+      - name: summary
+        label: Summary
+        type: text
+        required: true
+      - name: text
+        label: Template text
+        type: text
+        required: true
+        description: Visitors copy this exactly as written, spacing included.
+      - name: draft
+        label: Hide from the site (draft)
+        type: boolean
+        default: false

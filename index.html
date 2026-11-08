@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EngCrew</title>
+<meta name="description" content="Hey there EngCrew! Study tips, co-op advice, hands-on build guides and free templates for engineering students.">
+<meta property="og:title" content="EngCrew">
+<meta property="og:description" content="Study tips, co-op advice, hands-on build guides and free templates for engineering students.">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<meta property="og:image" content="images/icon-192.png">
+<meta name="theme-color" content="#1c377d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,800;6..12,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: circuit-board ground in the logo's blues; the logo is the hero and the header mark, and it reacts to scrolling. */
+:root{
+  --paper:#f2f6fd;
+  --ink:#0f1f47;
+  --muted:#52607f;
+  --line:#d3dcef;
+  --grid:rgba(45,95,212,.06);
+  --accent:#2d5fd4;
+  --sky:#8ed0f9;
+  --card:#ffffff;
+  --display:"Nunito Sans", "Gadugi", "Segoe UI", system-ui, sans-serif;
+  --body:"Nunito Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0a1330; --ink:#e7eeff; --muted:#9fb0d6; --line:#22336a;
+    --grid:rgba(142,208,249,.05); --accent:#6aaaf5; --sky:#8ed0f9; --card:#111d45; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0a1330; --ink:#e7eeff; --muted:#9fb0d6; --line:#22336a;
+  --grid:rgba(142,208,249,.05); --accent:#6aaaf5; --sky:#8ed0f9; --card:#111d45; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font:17px/1.6 var(--body);
+}
+a{color:inherit}
+h1,h2,h3{font-family:var(--display); font-weight:900; text-wrap:balance; margin:0; line-height:1.08; letter-spacing:-.015em}
+.wrap{max-width:1100px; margin:0 auto; padding:0 20px}
+.mono{font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+
+header{border-bottom:1px solid var(--line); background:color-mix(in srgb,var(--paper) 88%,transparent); backdrop-filter:blur(8px); position:sticky; top:0; z-index:5}
+.bar{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 0; flex-wrap:wrap}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; font-family:var(--display); font-weight:900; font-size:21px}
+.brand svg{width:44px; height:44px; display:block}
+nav{display:flex; gap:4px; flex-wrap:wrap}
+nav a{text-decoration:none; font-weight:600; padding:6px 14px; border-radius:999px}
+nav a:hover{background:var(--card)}
+nav a[aria-current="page"]{background:var(--accent); color:#fff}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+main{padding:36px 0 64px}
+.view{display:none}
+.view.active{display:block}
+
+/* hero */
+.hero{display:grid; grid-template-columns:1.15fr 1fr; gap:40px; align-items:center; padding-bottom:40px}
+.hero h1{font-size:clamp(40px,6vw,66px)}
+.hero h1 em{font-style:normal; color:var(--accent)}
+.hero p.lead{font-size:19px; color:var(--muted); max-width:50ch; margin:18px 0 26px}
+.btns{display:flex; gap:10px; flex-wrap:wrap}
+.btn{display:inline-block; text-decoration:none; font:800 15px var(--body); padding:12px 20px; border-radius:999px; border:2px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer}
+.btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+.stats{display:flex; gap:24px; margin-top:28px; flex-wrap:wrap}
+.stats div{display:flex; flex-direction:column}
+.stats b{font-size:26px; font-weight:900; font-variant-numeric:tabular-nums}
+.stats span{font-size:13px; color:var(--muted)}
+
+.logo-stage{position:relative; max-width:440px; width:100%; justify-self:center; padding-top:44px}
+.logo-stage .logo-art{width:100%; height:auto; display:block; filter:drop-shadow(0 18px 30px rgba(28,55,125,.25))}
+.logo-word{font-family:"Gadugi","Nunito Sans",sans-serif; font-weight:800; font-size:44px}
+.bubble{position:absolute; left:34%; top:0; z-index:1; background:var(--card); color:var(--ink); border:2px solid var(--ink); border-radius:16px; padding:6px 14px; font:900 20px var(--display); transform-origin:85% 100%; transform:scale(0) rotate(-8deg); transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.bubble::after{content:""; position:absolute; right:14px; bottom:-10px; width:14px; height:14px; background:var(--card); border-right:2px solid var(--ink); border-bottom:2px solid var(--ink); transform:rotate(45deg)}
+.bubble.show{transform:scale(1) rotate(-4deg)}
+.hint{text-align:center; margin-top:6px}
+/* Pin the hero while the arm turns the gear two full teeth, on screens tall enough to hold it */
+.pin-space{display:none}
+@media (min-width:821px) and (min-height:660px){
+  .hero{position:sticky; top:84px}
+  .pin-space{display:block; height:640px}
+}
+
+/* wire pop-out */
+.logo-art .pop{transform-box:fill-box; transform-origin:center; transform:scale(0); opacity:0}
+.logo-art .gx-l{transform-origin:left center}
+.logo-art .gx-r{transform-origin:right center}
+.logo-art.wired .pop{animation:pop .55s cubic-bezier(.3,1.7,.5,1) forwards; animation-delay:calc(var(--i) * 80ms + 250ms)}
+.logo-art.wired #sideWires .pop{animation-delay:calc(var(--i) * 80ms + 650ms)}
+@keyframes pop{0%{transform:scale(0);opacity:0}60%{opacity:1}100%{transform:scale(1);opacity:1}}
+.brand .pop{transform:none; opacity:1}
+
+section.block{padding-top:44px}
+.sechead{display:flex; justify-content:space-between; align-items:baseline; gap:16px; margin-bottom:18px; flex-wrap:wrap}
+.sechead h2{font-size:30px}
+.sechead a{font-weight:800; color:var(--accent); text-decoration:none}
+
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:16px}
+.card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; display:flex; flex-direction:column; gap:10px; text-decoration:none; transition:transform .15s, border-color .15s}
+.card:hover{border-color:var(--accent); transform:translateY(-2px)}
+.card h3{font-size:21px}
+.card p{margin:0; color:var(--muted)}
+.card .meta{margin-top:auto; padding-top:8px; display:flex; justify-content:space-between}
+.tag{display:inline-block; font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; background:color-mix(in srgb,var(--sky) 35%,transparent); color:var(--ink); padding:3px 10px; border-radius:999px; align-self:flex-start}
+
+.pagehead{margin-bottom:28px; max-width:65ch}
+.pagehead h1{font-size:clamp(32px,5vw,50px); margin:6px 0 10px}
+.pagehead p{color:var(--muted); font-size:18px; margin:0}
+
+.filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px}
+.filters button{font:700 14px var(--body); padding:6px 14px; background:var(--card); border:1px solid var(--line); border-radius:999px; color:var(--ink); cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--accent); color:#fff; border-color:var(--accent)}
+
+article{max-width:68ch}
+article h1{font-size:clamp(30px,5vw,46px); margin:10px 0 12px}
+article h2{font-size:23px; margin:32px 0 8px}
+article p,article li{font-size:17.5px}
+article ul,article ol{padding-left:22px}
+article li{margin:6px 0}
+.back{display:block; width:max-content; margin-bottom:14px; font-weight:800; text-decoration:none; color:var(--accent)}
+.callout{border-left:4px solid var(--accent); background:var(--card); border-radius:0 12px 12px 0; padding:14px 18px; margin:24px 0}
+.callout p{margin:0}
+.post-body blockquote{border-left:4px solid var(--accent); background:var(--card); border-radius:0 12px 12px 0; padding:14px 18px; margin:24px 0}
+.post-body blockquote p{margin:0}
+.post-body img{max-width:100%; height:auto; border-radius:12px; border:1px solid var(--line)}
+.post-body pre{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; overflow-x:auto; font:13px/1.6 var(--mono)}
+.post-body code{font-family:var(--mono); font-size:.9em}
+.load-error{color:var(--muted); grid-column:1/-1}
+
+.check{list-style:none; padding:0}
+.check li{display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--line); margin:0}
+.check input{margin-top:6px; width:18px; height:18px; accent-color:var(--accent); flex:none}
+.check label{cursor:pointer}
+.progress{font-family:var(--mono); font-size:13px; color:var(--muted)}
+
+.tpl{background:var(--card); border:1px solid var(--line); border-radius:14px; margin-bottom:20px; overflow:hidden}
+.tpl-head{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line); flex-wrap:wrap}
+.tpl-head h3{font-size:20px}
+.tpl-head p{margin:2px 0 0; color:var(--muted); font-size:14px}
+.tpl pre{margin:0; padding:18px; font:13px/1.65 var(--mono); white-space:pre-wrap; overflow-x:auto; max-height:360px; overflow-y:auto}
+.copy{font:800 13px var(--body); padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:transparent; color:var(--accent); cursor:pointer; min-width:96px}
+.copy.done{background:var(--accent); color:#fff}
+
+.about{display:grid; grid-template-columns:1fr 1fr; gap:32px}
+.about p{font-size:17.5px}
+.motto{margin:28px 0 0; padding:20px 22px; background:var(--accent); color:#fff; border-radius:14px}
+.motto p{margin:0; font:900 24px/1.25 var(--display)}
+.motto cite{display:block; margin-top:8px; font:500 12px var(--mono); text-transform:uppercase; letter-spacing:.06em; font-style:normal; opacity:.8}
+.infobox{align-self:start; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+.infobox div{display:grid; grid-template-columns:120px 1fr; border-bottom:1px solid var(--line)}
+.infobox div:last-child{border-bottom:0}
+.infobox span{padding:10px 14px}
+.infobox span:first-child{font:500 11px var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--muted); border-right:1px solid var(--line); display:flex; align-items:center}
+
+footer{border-top:1px solid var(--line); padding:24px 0 40px}
+footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+
+@media (max-width:820px){
+  .hero,.about{grid-template-columns:1fr}
+  .logo-stage{max-width:320px; order:-1}
+  nav{gap:0}
+  nav a{padding:6px 9px; font-size:15px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important}
+  .logo-art .pop{transform:none; opacity:1; animation:none!important}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#home" aria-label="EngCrew home"><svg viewBox="12 12 216 216" aria-hidden="true"><use href="#logoArt"/></svg>EngCrew</a>
+    <nav aria-label="Main">
+      <a href="#home">Home</a>
+      <a href="#blog">Blog</a>
+      <a href="#guides">Guides</a>
+      <a href="#templates">Templates</a>
+      <a href="#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="view" id="v-home">
+   <div class="hero-pin">
+    <div class="hero">
+      <div>
+        <p class="mono">Tips · Guides · Templates for engineering students</p>
+        <h1>Hey there <em>EngCrew!</em></h1>
+        <p class="lead">Welcome to the crew. This is where the posts get the full version: study tips, co-op advice, hands-on build guides and free templates to get you through engineering.</p>
+        <div class="btns">
+          <a class="btn" href="#templates">Get the free templates</a>
+          <a class="btn ghost" href="https://www.instagram.com/engcrew.ca/">Follow @engcrew.ca</a>
+        </div>
+        <div class="stats">
+          <div><b id="countPosts">4</b><span>blog posts</span></div>
+          <div><b id="countGuides">3</b><span>checklists</span></div>
+          <div><b id="countTpl">5</b><span>free templates</span></div>
+        </div>
+      </div>
+      <div class="logo-stage" id="logoStage">
+        <div class="bubble" id="bubble" aria-hidden="true">Hi!</div>
+        <svg class="logo-art" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EngCrew logo: a robot arm waving above circuit wires">
+<defs>
+<linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(10.341342,9.673054,-2.521867,2.696097,97.123409,175.81408)"><stop offset="0" stop-color="#3782e7"/><stop offset="0.63" stop-color="#3b86e8"/><stop offset="1" stop-color="#519aec"/></linearGradient>
+<linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-26.488952,24.961925,-2.531845,-2.686729,126.402562,169.953833)"><stop offset="0" stop-color="#82c8f7"/><stop offset="0.2" stop-color="#63abf0"/><stop offset="0.5" stop-color="#5da5ef"/><stop offset="1" stop-color="#3782e7"/></linearGradient>
+<linearGradient id="_Linear3" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(23.362129,0,-0,3.691714,125.125934,170.456326)"><stop offset="0" stop-color="#77bef5"/><stop offset="1" stop-color="#83c9f7"/></linearGradient>
+</defs>
+<g id="logoArt" fill-rule="evenodd" clip-rule="evenodd">
+<g><circle cx="120" cy="120" r="108" fill="#1c377d"/><circle cx="120" cy="120" r="97.2" fill="#2d5fd4"/><path d="M12,120l108,-0l108,0c-0,59.647 -48.353,108 -108,108c-59.647,-0 -108,-48.353 -108,-108Z" fill="#1d387e"/></g>
+
+<g id="gearSide">
+ <g id="sideWires">
+  <g class="pop-set"><rect class="pop gx-r" style="--i:0" x="68.399" y="72.463" width="11.854" height="3.519" fill="#a2d8f7"/><path class="pop" style="--i:1" d="M64.987,69.603l5.296,3.572l-1.888,2.8l-5.296,-3.572l1.888,-2.8Z" fill="#a2d8f7"/><path class="pop node" style="--i:2" d="M60.851,61.923c3.223,0 5.84,2.617 5.84,5.84c0,3.223 -2.617,5.84 -5.84,5.84c-3.223,0 -5.84,-2.617 -5.84,-5.84c0,-3.223 2.617,-5.84 5.84,-5.84Zm0,2.92c1.612,0 2.920,1.308 2.920,2.920c0,1.612 -1.308,2.920 -2.920,2.920c-1.612,0 -2.920,-1.308 -2.920,-2.920c0,-1.612 1.308,-2.920 2.920,-2.920Z" fill="#a2d8f7"/></g>
+  <g class="pop-set"><rect class="pop gx-r" style="--i:0" x="68.399" y="87.917" width="11.854" height="3.519" fill="#a2d8f7"/><path class="pop" style="--i:1" d="M64.987,94.296l5.296,-3.572l-1.888,-2.8l-5.296,3.572l1.888,2.8Z" fill="#a2d8f7"/><path class="pop node" style="--i:2" d="M60.851,101.976c3.223,0 5.84,-2.617 5.84,-5.84c0,-3.223 -2.617,-5.84 -5.84,-5.84c-3.223,0 -5.84,2.617 -5.84,5.84c0,3.223 2.617,5.84 5.84,5.84Zm0,-2.92c1.612,0 2.92,-1.308 2.92,-2.92c0,-1.612 -1.308,-2.92 -2.92,-2.92c-1.612,0 -2.92,1.308 -2.92,2.92c0,1.612 1.308,2.92 2.92,2.92Z" fill="#a2d8f7"/></g>
+  <g class="pop-set"><rect class="pop gx-r" style="--i:0" x="55.011" y="80.19" width="25.242" height="3.519" fill="#a2d8f7"/><path class="pop node" style="--i:2" d="M50.48,76.109c3.223,0 5.84,2.617 5.84,5.84c0,3.223 -2.617,5.84 -5.84,5.84c-3.223,0 -5.84,-2.617 -5.84,-5.84c0,-3.223 2.617,-5.84 5.84,-5.84Zm0,2.92c1.612,0 2.92,1.308 2.92,2.92c0,1.612 -1.308,2.92 -2.92,2.92c-1.612,0 -2.92,-1.308 -2.92,-2.92c0,-1.612 1.308,-2.92 2.92,-2.92Z" fill="#a2d8f7"/></g>
+ </g>
+ <g id="gear"><path d="M96.304,50.183c3.802,-0.67 7.693,-0.67 11.495,0l1.722,7.155c1.691,0.5 3.326,1.169 4.88,1.995l6.344,-3.858c3.168,2.179 5.92,4.896 8.128,8.023l-3.908,6.262c0.838,1.534 1.515,3.148 2.021,4.817l7.249,1.7c0.679,3.752 0.679,7.593 0,11.346l-7.249,1.7c-0.507,1.669 -1.184,3.283 -2.021,4.817l3.908,6.262c-2.208,3.127 -4.960,5.843 -8.128,8.023l-6.344,-3.858c-1.554,0.827 -3.189,1.495 -4.88,1.995l-1.722,7.155c-3.802,0.67 -7.693,0.67 -11.495,0l-1.722,-7.155c-1.691,-0.5 -3.326,-1.169 -4.88,-1.995l-6.344,3.858c-3.168,-2.179 -5.92,-4.896 -8.128,-8.023l3.908,-6.262c-0.838,-1.534 -1.515,-3.148 -2.021,-4.817l-7.249,-1.7c-0.679,-3.752 -0.679,-7.593 0,-11.346l7.249,-1.7c0.507,-1.669 1.184,-3.283 2.021,-4.817l-3.908,-6.262c2.208,-3.127 4.96,-5.843 8.128,-8.023l6.344,3.858c1.554,-0.827 3.189,-1.495 4.88,-1.995l1.722,-7.155Zm5.748,18.77c7.268,0 13.168,5.824 13.168,12.997c0,7.173 -5.9,12.997 -13.168,12.997c-7.268,0 -13.168,-5.824 -13.168,-12.997c0,-7.173 5.9,-12.997 13.168,-12.997Z" fill="#1a3080"/></g>
+</g>
+
+<g id="robot">
+ <path d="M153.788,115.847l0,-5.927c0,0 -0.506,-3.623 4.213,-4.368l34.682,0c0,0 4.76,-0.153 4.667,4.667l0,5.628l-43.563,0Z" fill="#3782e7"/>
+ <g><ellipse cx="177.445" cy="91.967" rx="13.883" ry="12.258" fill="#1e377c"/><ellipse cx="177.388" cy="93.654" rx="11.024" ry="10.57" fill="#8ed0f9"/><rect x="166.363" y="92.331" width="22.049" height="9.917" fill="#8ed0f9"/></g>
+ <g><path d="M150.561,115.376l3.226,0.024l0,-5.754c0,0 -0.506,-3.395 4.213,-4.093l34.682,0c0,0 4.76,-0.143 4.667,4.374l0,5.441l3.287,0l0.023,-5.916c0,0 -0.783,-6.41 -7.223,-7.173l-35.553,-0.025c0,0 -5.813,-0.435 -7.257,6.421l-0.066,6.702Z" fill="#1e377c"/><rect x="163.562" y="92.331" width="2.802" height="9.917" fill="#1e377c"/><rect x="188.298" y="92.331" width="3.029" height="9.917" fill="#1e377c"/></g>
+ <g id="upperArm">
+  <path d="M160.307,60.594l4.036,27.369l2.93,-4.036l-3.383,-21.364l-3.584,-1.969Z" fill="#1f3679"/>
+  <path d="M181.552,80.269l4.783,2.247l-10.674,-23.770l-2.355,2.731l8.247,18.792Z" fill="#1f3679"/>
+  <path d="M173.625,62.205l7.92,18.048c-1.296,-0.354 -2.673,-0.544 -4.1,-0.544c-4.037,0 -7.675,1.525 -10.212,3.958l-3.023,-19.091c0.857,0.252 1.763,0.388 2.701,0.388c2.616,0 4.988,-1.053 6.714,-2.758Z" fill="#8ed0f9"/>
+  <g id="forearm">
+   <path d="M160.177,56.629l-0.46,3.961l-16.323,-1.895l0.46,-3.961l16.323,1.895Z" fill="#1e377c"/>
+   <path d="M165.789,45.898l-0.46,3.961l-24.034,-2.79l0.46,-3.961l24.034,2.79Z" fill="#1e377c"/>
+   <path d="M147.819,47.827l11.831,1.373c-1.431,1.67 -2.295,3.839 -2.295,6.209c0,0.302 0.014,0.602 0.042,0.897l-9.872,-1.146c0.628,-1.187 0.983,-2.54 0.983,-3.975c0,-1.192 -0.245,-2.328 -0.688,-3.358Z" fill="#3982e6"/>
+   <g id="hand">
+    <rect x="134.939" y="57.823" width="9.309" height="7.93" fill="#1d387e"/>
+    <path id="fingerR" d="M144.248,63.043l0,-0.878l-5.294,0l0,5.092l3.371,0c0,0 1.559,1.011 0.927,3.034l-0.632,2.023c0,0 -0.008,2.036 1.628,2.655c1.637,0.619 0.942,0.969 3.723,-5.815c0,0 0.855,-4.466 -3.723,-6.110Z" fill="#1d387e"/>
+    <path id="fingerL" d="M135.066,63.043l0,-0.878l5.294,0l0,5.092l-3.371,0c0,0 -1.559,1.011 -0.927,3.034l0.632,2.023c0,0 0.008,2.036 -1.628,2.655c-1.637,0.619 -0.942,0.969 -3.723,-5.815c0,0 -0.855,-4.466 3.723,-6.110Z" fill="#1d387e"/>
+    <path d="M139.988,42.666c4.702,0 8.52,3.818 8.52,8.52c0,4.702 -3.818,8.52 -8.52,8.52c-4.702,0 -8.52,-3.818 -8.52,-8.52c0,-4.702 3.818,-8.52 8.52,-8.52Zm0,4.26c2.351,0 4.26,1.909 4.26,4.26c0,2.351 -1.909,4.26 -4.26,4.26c-2.351,0 -4.26,-1.909 -4.26,-4.26c0,-2.351 1.909,-4.26 4.26,-4.26Z" fill="#1e377c"/>
+    <circle cx="140.04" cy="51.038" r="4.44" fill="#83cbf8"/>
+   </g>
+   <path d="M166.911,45.856c5.274,0 9.556,4.281 9.556,9.554c0,5.273 -4.282,9.554 -9.556,9.554c-5.274,0 -9.556,-4.281 -9.556,-9.554c0,-5.273 4.282,-9.554 9.556,-9.554Zm0,3.821c3.164,0 5.734,2.569 5.734,5.732c0,3.164 -2.569,5.732 -5.734,5.732c-3.164,0 -5.734,-2.569 -5.734,-5.732c0,-3.164 2.569,-5.732 5.734,-5.732Z" fill="#1e377c"/>
+   <path d="M166.911,49.409c3.311,0 6,2.689 6,6c0,3.311 -2.689,6 -6,6c-3.311,0 -6,-2.689 -6,-6c0,-3.311 2.689,-6 6,-6Zm0,3c1.656,0 3,1.344 3,3c0,1.656 -1.344,3 -3,3c-1.656,0 -3,-1.344 -3,-3c0,-1.656 1.344,-3 3,-3Z" fill="#83cbf8"/>
+   <circle cx="166.911" cy="55.409" r="3.513" fill="#1e377c"/>
+  </g>
+ </g>
+ <g id="eye"><circle cx="177.331" cy="93.654" r="6.137" fill="#1e377c"/></g>
+</g>
+
+<path d="M225.984,115.2l-212.172,0l-0.161,8.186l212.493,0l-0.161,-8.186Z" fill="#1d387e"/>
+
+<text x="30.338" y="153.563" class="logo-word" fill="#fff" textLength="169" lengthAdjust="spacingAndGlyphs">EngCrew</text>
+
+<g id="wiresA">
+ <path class="pop node" style="--i:0" d="M79.844,169.958c3.609,0 6.539,2.93 6.539,6.539c0,3.609 -2.93,6.539 -6.539,6.539c-3.609,0 -6.539,-2.93 -6.539,-6.539c0,-3.609 2.93,-6.539 6.539,-6.539Zm0,3.597c1.624,0 2.943,1.319 2.943,2.943c0,1.624 -1.319,2.943 -2.943,2.943c-1.624,0 -2.943,-1.319 -2.943,-2.943c0,-1.624 1.319,-2.943 2.943,-2.943Z" fill="#3782e7"/>
+ <rect class="pop gx-l" style="--i:1" x="85.846" y="174.466" width="12.463" height="3.692" fill="#3782e7"/>
+ <path class="pop" style="--i:2" d="M108.726,184.139l-2.522,2.696l-10.341,-9.673l2.522,-2.696l10.341,9.673Z" fill="url(#_Linear1)"/>
+ <path class="pop node" style="--i:3" d="M94.972,190.058c3.609,0 6.539,2.93 6.539,6.539c0,3.609 -2.93,6.539 -6.539,6.539c-3.609,0 -6.539,-2.93 -6.539,-6.539c0,-3.609 2.93,-6.539 6.539,-6.539Zm0,3.597c1.624,0 2.943,1.319 2.943,2.943c0,1.624 -1.319,2.943 -2.943,2.943c-1.624,0 -2.943,-1.319 -2.943,-2.943c0,-1.624 1.319,-2.943 2.943,-2.943Z" fill="#3782e7"/>
+ <path class="pop" style="--i:4" d="M101.18,196.259l-2.532,-2.687l26.489,-24.962l2.532,2.687l-26.489,24.962Z" fill="url(#_Linear2)"/>
+ <rect class="pop gx-l" style="--i:5" x="125.126" y="168.61" width="23.362" height="3.692" fill="url(#_Linear3)"/>
+ <path class="pop node" style="--i:6" d="M154.526,164.101c3.609,0 6.539,2.93 6.539,6.539c0,3.609 -2.93,6.539 -6.539,6.539c-3.609,0 -6.539,-2.93 -6.539,-6.539c0,-3.609 2.93,-6.539 6.539,-6.539Zm0,3.597c1.624,0 2.943,1.319 2.943,2.943c0,1.624 -1.319,2.943 -2.943,2.943c-1.624,0 -2.943,-1.319 -2.943,-2.943c0,-1.624 1.319,-2.943 2.943,-2.943Z" fill="#83c9f7"/>
+</g>
+<g id="wiresB">
+ <path class="pop node" style="--i:3" d="M128.78,179.44c3.609,0 6.539,2.93 6.539,6.539c0,3.609 -2.93,6.539 -6.539,6.539c-3.609,0 -6.539,-2.93 -6.539,-6.539c0,-3.609 2.93,-6.539 6.539,-6.539Zm0,3.597c1.624,0 2.943,1.319 2.943,2.943c0,1.624 -1.319,2.943 -2.943,2.943c-1.624,0 -2.943,-1.319 -2.943,-2.943c0,-1.624 1.319,-2.943 2.943,-2.943Z" fill="#3782e7"/>
+ <rect class="pop gx-l" style="--i:4" x="134.009" y="184.133" width="26.061" height="3.692" fill="#3782e7"/>
+ <circle class="pop node" style="--i:6" cx="162.405" cy="185.979" r="3" fill="#3782e7"/>
+</g>
+</g>
+</svg>
+
+        <p class="mono hint" id="hint">Scroll to turn the gear</p>
+      </div>
+    </div>
+    <div class="pin-space" aria-hidden="true"></div>
+   </div>
+
+    <section class="block">
+      <div class="sechead"><h2>Latest from the blog</h2><a href="#blog">All posts →</a></div>
+      <div class="grid" id="homePosts"></div>
+    </section>
+
+    <section class="block">
+      <div class="sechead"><h2>Step-by-step guides</h2><a href="#guides">All guides →</a></div>
+      <div class="grid" id="homeGuides"></div>
+    </section>
+
+    <section class="block">
+      <div class="sechead"><h2>Copy-and-use templates</h2><a href="#templates">All templates →</a></div>
+      <div class="grid" id="homeTpl"></div>
+    </section>
+  </div>
+
+  <div class="view" id="v-blog">
+    <div class="pagehead">
+      <p class="mono">Blog</p>
+      <h1>Tips you can use this week</h1>
+      <p>Short reads on studying, co-op and life in engineering.</p>
+    </div>
+    <div class="filters" id="blogFilters" role="group" aria-label="Filter posts by topic"></div>
+    <div class="grid" id="blogList"></div>
+  </div>
+
+  <div class="view" id="v-guides">
+    <div class="pagehead">
+      <p class="mono">Guides</p>
+      <h1>Checklists that walk you through it</h1>
+      <p>Tick items off as you go. Your progress stays saved in this browser.</p>
+    </div>
+    <div class="grid" id="guideList"></div>
+  </div>
+
+  <div class="view" id="v-templates">
+    <div class="pagehead">
+      <p class="mono">Templates</p>
+      <h1>Free templates</h1>
+      <p>Hit Copy, paste into Google Docs or Word, then swap in your own details.</p>
+    </div>
+    <div id="tplList"></div>
+  </div>
+
+  <div class="view" id="v-about">
+    <div class="pagehead">
+      <p class="mono">About</p>
+      <h1>Why it's called EngCrew</h1>
+    </div>
+    <div class="about">
+      <div>
+        <p>I started EngCrew with no crew at all. I was my own writer, editor and director, and I learned every one of those jobs by getting it wrong first.</p>
+        <p>So the name was never about me. When a video opens with <strong>"Hey there EngCrew!"</strong>, it's talking to you: the students watching, building and figuring engineering out alongside each other. You're the crew.</p>
+        <p>The content follows the same idea. I take real engineering work like circuit boards, 3D printing and hands-on builds and make it something anyone can follow, along with the study and co-op advice that gets you through the degree.</p>
+        <blockquote class="motto"><p>"Limitations are the backbone of innovations."</p><cite>The motto behind EngCrew</cite></blockquote>
+      </div>
+      <div class="infobox">
+        <div><span>Instagram</span><span><a href="https://www.instagram.com/engcrew.ca/">@engcrew.ca</a></span></div>
+        <div><span>For</span><span>High school, undergrad and co-op students</span></div>
+        <div><span>Got an idea?</span><span>DM us on Instagram with a topic you want covered</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="v-item"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><strong>EngCrew</strong> · Helping engineering students, one post at a time.</span>
+    <a href="https://www.instagram.com/engcrew.ca/">Instagram @engcrew.ca</a>
+  </div>
+</footer>
+
+<script>
+
+/* Content lives in the _blog, _guides and _templates folders and is edited in Pages CMS.
+   GitHub Pages turns those files into content.json, which this page loads. */
+let POSTS = [], GUIDES = [], TEMPLATES = [];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const safeId = s => String(s).toLowerCase().replace(/[^a-z0-9-]+/g,"-");
+const fixMedia = html => String(html||"").replace(/(src|href)="\/images\//g,'$1="images/');   // works with or without a custom domain
+const newestFirst = (a,b) => (b.date||"").localeCompare(a.date||"");
+const store = {
+  get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+
+function loadContent(d){
+  POSTS = (d.posts||[]).filter(p=>!p.draft).sort(newestFirst).map(p=>({
+    id:"post-"+safeId(p.slug), title:p.title, topic:p.topic||"General", mins:p.minutes||3, blurb:p.summary||"", body:fixMedia(p.body)}));
+  GUIDES = (d.guides||[]).filter(g=>!g.draft).sort(newestFirst).map(g=>({
+    id:"guide-"+safeId(g.slug), title:g.title, tag:g.tag||"Guide", blurb:g.summary||"", steps:(g.steps||[]).filter(Boolean)}));
+  TEMPLATES = (d.templates||[]).filter(t=>!t.draft).sort(newestFirst).map(t=>({
+    id:"tpl-"+safeId(t.slug), title:t.title, desc:t.summary||"", text:String(t.text||"").replace(/^\s*\n/,"").replace(/\s+$/,"")}));
+}
+
+const postCard = p => `<a class="card" href="#${p.id}"><span class="tag">${esc(p.topic)}</span><h3>${esc(p.title)}</h3><p>${esc(p.blurb)}</p><div class="meta mono"><span>Blog</span><span>${esc(p.mins)} min read</span></div></a>`;
+const guideCard = g => {
+  const done = (store.get(g.id)||[]).length;
+  return `<a class="card" href="#${g.id}"><span class="tag">${esc(g.tag)}</span><h3>${esc(g.title)}</h3><p>${esc(g.blurb)}</p><div class="meta mono"><span>Guide</span><span>${done}/${g.steps.length} done</span></div></a>`;
+};
+const tplCard = t => `<a class="card" href="#${t.id}"><span class="tag">Template</span><h3>${esc(t.title)}</h3><p>${esc(t.desc)}</p><div class="meta mono"><span>Copy &amp; paste</span><span>Free</span></div></a>`;
+
+function renderLists(){
+  $("#homePosts").innerHTML = POSTS.slice(0,3).map(postCard).join("");
+  $("#homeGuides").innerHTML = GUIDES.slice(0,3).map(guideCard).join("");
+  $("#homeTpl").innerHTML = TEMPLATES.slice(0,3).map(tplCard).join("");
+  $("#guideList").innerHTML = GUIDES.map(guideCard).join("");
+  $("#countPosts").textContent = POSTS.length;
+  $("#countGuides").textContent = GUIDES.length;
+  $("#countTpl").textContent = TEMPLATES.length;
+}
+
+let topic = "All";
+function renderBlog(){
+  const topics = ["All",...new Set(POSTS.map(p=>p.topic))];
+  if(!topics.includes(topic)) topic = "All";
+  $("#blogFilters").innerHTML = topics.map(t=>`<button type="button" aria-pressed="${t===topic}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+  $("#blogList").innerHTML = POSTS.filter(p=>topic==="All"||p.topic===topic).map(postCard).join("");
+}
+$("#blogFilters").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b)return; topic=b.dataset.t; renderBlog();});
+
+function renderTemplates(){
+  $("#tplList").innerHTML = TEMPLATES.map(t=>`
+  <div class="tpl" id="${t.id}">
+    <div class="tpl-head"><div><h3>${esc(t.title)}</h3><p>${esc(t.desc)}</p></div><button class="copy" type="button" data-id="${t.id}">Copy</button></div>
+    <pre>${esc(t.text)}</pre>
+  </div>`).join("");
+}
+$("#tplList").addEventListener("click",async e=>{
+  const b=e.target.closest(".copy"); if(!b)return;
+  const t=TEMPLATES.find(x=>x.id===b.dataset.id);
+  try{await navigator.clipboard.writeText(t.text); b.textContent="Copied"; b.classList.add("done");}
+  catch(err){
+    const pre=b.closest(".tpl").querySelector("pre"); const r=document.createRange(); r.selectNodeContents(pre);
+    const s=getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent="Selected, press Ctrl+C";
+  }
+  setTimeout(()=>{b.textContent="Copy"; b.classList.remove("done")},2200);
+});
+
+function renderItem(id){
+  const p = POSTS.find(x=>x.id===id);
+  if(p){
+    return `<article><a class="back" href="#blog">← All posts</a><span class="tag">${esc(p.topic)}</span><h1>${esc(p.title)}</h1><p class="mono">${esc(p.mins)} min read</p><div class="post-body">${p.body}</div></article>`;
+  }
+  const g = GUIDES.find(x=>x.id===id);
+  if(g){
+    const done = new Set(store.get(g.id)||[]);
+    return `<article><a class="back" href="#guides">← All guides</a><span class="tag">${esc(g.tag)}</span><h1>${esc(g.title)}</h1><p>${esc(g.blurb)}</p>
+      <p class="progress" id="prog">${done.size} of ${g.steps.length} complete</p>
+      <ul class="check" data-g="${g.id}">${g.steps.map((s,i)=>`<li><input type="checkbox" id="${g.id}-${i}" data-i="${i}" ${done.has(i)?"checked":""}><label for="${g.id}-${i}">${esc(s)}</label></li>`).join("")}</ul></article>`;
+  }
+  return null;
+}
+document.addEventListener("change",e=>{
+  const ul=e.target.closest(".check"); if(!ul)return;
+  const ids=[...ul.querySelectorAll("input:checked")].map(i=>+i.dataset.i);
+  store.set(ul.dataset.g,ids);
+  $("#prog").textContent = `${ids.length} of ${ul.querySelectorAll("input").length} complete`;
+});
+
+const VIEWS=["home","blog","guides","templates","about"];
+function route(){
+  const h = location.hash.slice(1) || "home";
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  let navKey = h;
+  if(VIEWS.includes(h)){
+    $("#v-"+h).classList.add("active");
+  } else if(h.startsWith("tpl-")){
+    $("#v-templates").classList.add("active"); navKey="templates";
+    const el=document.getElementById(h); if(el) el.scrollIntoView();
+  } else {
+    const html = renderItem(h);
+    if(html){ $("#v-item").innerHTML=html; $("#v-item").classList.add("active"); navKey = h.startsWith("post-")?"blog":"guides"; }
+    else { $("#v-home").classList.add("active"); navKey="home"; }
+  }
+  document.querySelectorAll("nav a").forEach(a=>{ if(a.getAttribute("href")==="#"+navKey) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  renderLists();
+  if(!h.startsWith("tpl-")) window.scrollTo(0,0);
+}
+
+function start(){ renderBlog(); renderTemplates(); route(); }
+window.addEventListener("hashchange",route);
+route();
+fetch("content.json",{cache:"no-cache"})
+  .then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(d=>{ loadContent(d); start(); })
+  .catch(()=>{
+    const msg = `<p class="load-error">Posts couldn't load right now. Refresh the page to try again.</p>`;
+    ["#homePosts","#blogList","#guideList","#tplList"].forEach(s=>$(s).innerHTML=msg);
+  });
+
+</script>
+<script>
+/* Logo motion. On load the arm waves hi and the wires pop out.
+   Scrolling drives a loop: the claw opens, grabs a gear tooth, turns the gear 45 degrees (one tooth), lets go and reaches for the next one.
+   The arm is solved with two-link inverse kinematics so the claw lands on the tooth at every frame. */
+(function(){
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const art = document.querySelector(".logo-stage .logo-art");
+  if(!art) return;
+  const $id = id => document.getElementById(id);
+  const upper=$id("upperArm"), fore=$id("forearm"), hand=$id("hand"), gear=$id("gear");
+  const fl=$id("fingerL"), fr=$id("fingerR"), eye=$id("eye");
+  const wA=$id("wiresA"), wB=$id("wiresB"), side=$id("sideWires");
+  const bubble=$id("bubble"), hint=$id("hint");
+
+  // Geometry taken from the logo artwork (viewBox units)
+  const S={x:177.4,y:93.654}, E0={x:166.911,y:55.409}, W0={x:140.04,y:51.04}, C={x:102.05,y:81.95};
+  const L1=Math.hypot(E0.x-S.x,E0.y-S.y), L2=Math.hypot(W0.x-E0.x,W0.y-E0.y);
+  const D=180/Math.PI;
+  const TH1=Math.atan2(E0.y-S.y,E0.x-S.x), TH2=Math.atan2(W0.y-E0.y,W0.x-E0.x);
+  const GRIP_R=50.5, HOVER_R=59, OPEN=26, GRIP=17;   // wrist distance from gear centre; finger angles
+  const PRE=90, CYC=260;                               // px of scroll: rest->ready, then one tooth per cycle
+
+  const ease=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+  const lerp=(a,b,k)=>a+(b-a)*k;
+  const polar=(r,deg)=>({x:C.x+r*Math.cos(deg/D), y:C.y+r*Math.sin(deg/D)});
+
+  function solve(W){
+    let dx=W.x-S.x, dy=W.y-S.y, d=Math.hypot(dx,dy);
+    d=Math.min(L1+L2-.01, Math.max(Math.abs(L1-L2)+.01, d));
+    const beta=Math.atan2(dy,dx);
+    const alpha=Math.acos((L1*L1+d*d-L2*L2)/(2*L1*d));
+    const th1=beta+alpha;                               // elbow-up branch, matches the logo's resting pose
+    const E={x:S.x+L1*Math.cos(th1), y:S.y+L1*Math.sin(th1)};
+    const th2=Math.atan2(W.y-E.y,W.x-E.x);
+    return {a1:(th1-TH1)*D, a12:(th2-TH2)*D};
+  }
+
+  // Pose for a given scroll position: wrist target, claw angle, finger opening, gear angle
+  function pose(s){
+    if(s<=0) return {W:W0, hand:0, grip:0, gear:0, rest:1};
+    if(s<PRE){
+      const k=ease(s/PRE), H=polar(HOVER_R,0);
+      return {W:{x:lerp(W0.x,H.x,k), y:lerp(W0.y,H.y,k)}, hand:90*k, grip:OPEN*k, gear:0, rest:1-k};
+    }
+    const t=s-PRE, n=Math.floor(t/CYC), u=(t%CYC)/CYC, base=-45*n;
+    let r=HOVER_R, phi=0, grip=OPEN, g=base;
+    if(u<.14){ r=lerp(HOVER_R,GRIP_R,ease(u/.14)); }
+    else if(u<.22){ r=GRIP_R; grip=lerp(OPEN,GRIP,ease((u-.14)/.08)); }
+    else if(u<.70){ const k=ease((u-.22)/.48); r=GRIP_R; grip=GRIP; phi=-45*k; g=base-45*k; }
+    else if(u<.78){ r=GRIP_R; phi=-45; g=base-45; grip=lerp(GRIP,OPEN,ease((u-.70)/.08)); }
+    else if(u<.86){ phi=-45; g=base-45; r=lerp(GRIP_R,HOVER_R,ease((u-.78)/.08)); }
+    else { g=base-45; phi=-45*(1-ease((u-.86)/.14)); }
+    return {W:polar(r,phi), hand:phi+90, grip, gear:g, rest:0};
+  }
+
+  function apply(p, wave){
+    const {a1,a12}=solve(p.W);
+    const a2=a12-a1+wave, a3=p.hand-a12-wave;
+    upper.setAttribute("transform",`rotate(${a1.toFixed(2)} ${S.x} ${S.y})`);
+    fore.setAttribute("transform",`rotate(${a2.toFixed(2)} ${E0.x} ${E0.y})`);
+    hand.setAttribute("transform",`rotate(${a3.toFixed(2)} ${W0.x} ${W0.y})`);
+    fl.setAttribute("transform",`rotate(${p.grip.toFixed(2)} 137.7 64)`);
+    fr.setAttribute("transform",`rotate(${(-p.grip).toFixed(2)} 141.6 64)`);
+    gear.setAttribute("transform",`rotate(${p.gear.toFixed(2)} ${C.x} ${C.y})`);
+  }
+
+  function replayWires(){ art.classList.remove("wired"); void art.getBoundingClientRect(); art.classList.add("wired"); }
+
+  if(reduce){ art.classList.add("wired"); hint.textContent=""; return; }
+  requestAnimationFrame(replayWires);
+
+  let sm=scrollY, lastY=scrollY, energy=0, waveStart=performance.now(), farAway=false, blinkAt=performance.now()+2600;
+  addEventListener("scroll",()=>{
+    energy=Math.min(1, energy+Math.abs(scrollY-lastY)*0.01); lastY=scrollY;
+    if(scrollY>PRE*2) farAway=true;
+    if(farAway && scrollY<20){ farAway=false; replayWires(); waveStart=performance.now(); }
+    if(scrollY>10) hint.style.opacity="0";
+  },{passive:true});
+
+  function frame(t){
+    const onHome=document.getElementById("v-home").classList.contains("active");
+    const target=onHome?scrollY:0;
+    sm+= (target-sm)*0.16; if(Math.abs(target-sm)<.05) sm=target;
+    const p=pose(sm);
+    const wt=(t-waveStart)/1000;                      // hello wave, about 2 seconds
+    const wave = wt<2.2 ? Math.sin(wt*Math.PI*3.2)*24*(1-wt/2.2)*p.rest : 0;
+    apply(p, wave);
+    bubble.classList.toggle("show", wt<2.6 && p.rest>.6);
+    energy*=.95;
+    const sp=energy*4;
+    wA.setAttribute("transform",`translate(${(-sp*.6).toFixed(2)} ${sp.toFixed(2)})`);
+    wB.setAttribute("transform",`translate(${sp.toFixed(2)} ${(sp*.8).toFixed(2)})`);
+    side.setAttribute("transform",`translate(${(-sp).toFixed(2)} 0)`);
+    if(t>blinkAt){ eye.setAttribute("transform","translate(0 93.654) scale(1 0.15) translate(0 -93.654)"); if(t>blinkAt+140){ eye.removeAttribute("transform"); blinkAt=t+2600+Math.random()*3000; } }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  window.__logoPose = s => apply(pose(s),0);         // used for previews
+})();
+</script>
+</body>
+</html>

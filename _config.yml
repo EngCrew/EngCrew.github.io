@@ -1,0 +1,19 @@
+# GitHub Pages builds this site with Jekyll.
+# Posts, guides and templates live in the _blog, _guides and _templates folders.
+# content.json gathers them up, and index.html reads that file.
+
+title: EngCrew
+markdown: kramdown
+kramdown:
+  input: GFM
+
+collections:
+  blog:
+    output: false
+  guides:
+    output: false
+  templates:
+    output: false
+
+exclude:
+  - README.md
