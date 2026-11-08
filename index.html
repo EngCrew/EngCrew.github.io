@@ -96,13 +96,12 @@ main{padding:36px 0 64px}
 }
 
 /* wire pop-out */
-.logo-art .pop{transform-box:fill-box; transform-origin:center; transform:scale(0); opacity:0}
+.logo-art .pop{transform-box:fill-box; transform-origin:center}
 .logo-art .gx-l{transform-origin:left center}
 .logo-art .gx-r{transform-origin:right center}
-.logo-art.wired .pop{animation:pop .55s cubic-bezier(.3,1.7,.5,1) forwards; animation-delay:calc(var(--i) * 80ms + 250ms)}
+.logo-art.wired .pop{animation:pop .55s cubic-bezier(.3,1.7,.5,1) both; animation-delay:calc(var(--i) * 80ms + 250ms)}
 .logo-art.wired #sideWires .pop{animation-delay:calc(var(--i) * 80ms + 650ms)}
 @keyframes pop{0%{transform:scale(0);opacity:0}60%{opacity:1}100%{transform:scale(1);opacity:1}}
-.brand .pop{transform:none; opacity:1}
 
 section.block{padding-top:44px}
 .sechead{display:flex; justify-content:space-between; align-items:baseline; gap:16px; margin-bottom:18px; flex-wrap:wrap}
@@ -177,11 +176,17 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
 }
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important}
-  .logo-art .pop{transform:none; opacity:1; animation:none!important}
+  .logo-art .pop{animation:none!important}
 }
 </style>
 </head>
 <body>
+<!-- Gradients for the logo wires. Kept outside the Home view so the header logo can use them on every page. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(10.341342,9.673054,-2.521867,2.696097,97.123409,175.81408)"><stop offset="0" stop-color="#3782e7"/><stop offset="0.63" stop-color="#3b86e8"/><stop offset="1" stop-color="#519aec"/></linearGradient>
+<linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-26.488952,24.961925,-2.531845,-2.686729,126.402562,169.953833)"><stop offset="0" stop-color="#82c8f7"/><stop offset="0.2" stop-color="#63abf0"/><stop offset="0.5" stop-color="#5da5ef"/><stop offset="1" stop-color="#3782e7"/></linearGradient>
+<linearGradient id="_Linear3" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(23.362129,0,-0,3.691714,125.125934,170.456326)"><stop offset="0" stop-color="#77bef5"/><stop offset="1" stop-color="#83c9f7"/></linearGradient>
+</defs></svg>
 <header>
   <div class="wrap bar">
     <a class="brand" href="#home" aria-label="EngCrew home"><svg viewBox="12 12 216 216" aria-hidden="true"><use href="#logoArt"/></svg>EngCrew</a>
@@ -216,12 +221,8 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
       </div>
       <div class="logo-stage" id="logoStage">
         <div class="bubble" id="bubble" aria-hidden="true">Hi!</div>
-        <svg class="logo-art" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EngCrew logo: a robot arm waving above circuit wires">
-<defs>
-<linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(10.341342,9.673054,-2.521867,2.696097,97.123409,175.81408)"><stop offset="0" stop-color="#3782e7"/><stop offset="0.63" stop-color="#3b86e8"/><stop offset="1" stop-color="#519aec"/></linearGradient>
-<linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-26.488952,24.961925,-2.531845,-2.686729,126.402562,169.953833)"><stop offset="0" stop-color="#82c8f7"/><stop offset="0.2" stop-color="#63abf0"/><stop offset="0.5" stop-color="#5da5ef"/><stop offset="1" stop-color="#3782e7"/></linearGradient>
-<linearGradient id="_Linear3" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(23.362129,0,-0,3.691714,125.125934,170.456326)"><stop offset="0" stop-color="#77bef5"/><stop offset="1" stop-color="#83c9f7"/></linearGradient>
-</defs>
+        <svg class="logo-art wired" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EngCrew logo: a robot arm waving above circuit wires">
+
 <g id="logoArt" fill-rule="evenodd" clip-rule="evenodd">
 <g><circle cx="120" cy="120" r="108" fill="#1c377d"/><circle cx="120" cy="120" r="97.2" fill="#2d5fd4"/><path d="M12,120l108,-0l108,0c-0,59.647 -48.353,108 -108,108c-59.647,-0 -108,-48.353 -108,-108Z" fill="#1d387e"/></g>
 
@@ -552,8 +553,7 @@ fetch("content.json",{cache:"no-cache"})
 
   function replayWires(){ art.classList.remove("wired"); void art.getBoundingClientRect(); art.classList.add("wired"); }
 
-  if(reduce){ art.classList.add("wired"); hint.textContent=""; return; }
-  requestAnimationFrame(replayWires);
+  if(reduce){ hint.textContent=""; return; }
 
   let sm=scrollY, lastY=scrollY, energy=0, waveStart=performance.now(), farAway=false, blinkAt=performance.now()+2600;
   addEventListener("scroll",()=>{
