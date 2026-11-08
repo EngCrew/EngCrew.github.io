@@ -10,7 +10,7 @@ Designing your first circuit board is a rush. Getting it back and finding out a 
 
 ## 1. Check every footprint against the real part
 
-Print the layout at 1:1 scale and lay the actual components on the paper. A footprint that's one size off is the most common first-board mistake. KiCad!
+Print the layout at 1:1 scale and lay the actual components on the paper. A footprint that's one size off is the most common first-board mistake. KiCad! Blah blah test test!
 
 ## 2. Run the electrical and design rule checks
 
